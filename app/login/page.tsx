@@ -1,20 +1,20 @@
 'use client';
-
-import { useState } from 'react';
-import Link from 'next/link';
-
-import { useRouter } from 'next/navigation';
-import { redirect } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+// import { useDispatch } from "react-redux";
+import { useRouter } from 'next/navigation';
+// import { loginSuccess } from "../store/slices/authSlice";
 
-const Signup = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
-
+const Login = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  // const dispatch = useDispatch();
   const router = useRouter();
+  // const [isClient, setIsClient] = useState(false);
+
+  // useEffect(() => {
+  //   // Ensure code only runs on client-side
+  //   setIsClient(true);
+  // }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,35 +23,29 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      let result = await axios.post(
-        'http://localhost:10001/api/auth/register',
+      const response = await axios.post(
+        'http://localhost:10001/api/auth/login',
         formData
       );
-      alert('Signup successful!');
-      console.log('print the signup result : ', result);
-      if (result.data) {
-        console.log('this code run : after successfull sign');
-        // redirect('/admindash');
-        router.push('/login');
-      }
+      // const { user, token } = response.data;
+      console.log('print the result : ', response);
+
+      // Dispatch login success action to update Redux state
+      // dispatch(loginSuccess({ user, token }));
+
+      // Navigate to the dashboard or home page
+      // if (isClient) router.push('/admin/dashboard');
+      router.push('/admindash');
     } catch (error) {
       console.error(error);
-      alert('Signup failed');
+      alert('Login failed');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          onChange={handleChange}
-          className="mb-2 p-2 border rounded w-full"
-          required
-        />
+        <h2 className="text-2xl font-bold mb-4">Log In</h2>
         <input
           type="email"
           name="email"
@@ -72,11 +66,11 @@ const Signup = () => {
           type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded"
         >
-          Sign Up
+          Log In
         </button>
       </form>
     </div>
   );
 };
 
-export default Signup;
+export default Login;
